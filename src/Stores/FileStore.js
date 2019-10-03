@@ -7,7 +7,7 @@
 
 import { EventEmitter } from 'events';
 import { getLocationId } from '../Utils/Message';
-import { FILE_PRIORITY, THUMBNAIL_PRIORITY } from '../Constants';
+import { FILE_PRIORITY, IV_LOCATION_HEIGHT, IV_LOCATION_WIDTH, THUMBNAIL_PRIORITY } from '../Constants';
 import TdLibController from '../Controllers/TdLibController';
 
 const useReadFile = true;
@@ -135,12 +135,32 @@ class FileStore extends EventEmitter {
                     this.handleAnimation(store, item, file, arr, null);
                     break;
                 }
+                case 'audio': {
+                    this.handleAudio(store, item, file, arr, null);
+                    break;
+                }
                 case 'chat': {
                     this.handleChat(store, item, file, arr);
                     break;
                 }
+                case 'document': {
+                    this.handleDocument(store, item, file, arr, null);
+                    break;
+                }
+                case 'game': {
+                    this.handleGame(store, item, file, arr, null);
+                    break;
+                }
+                case 'location': {
+                    this.handleLocation(store, item, file, arr, null);
+                    break;
+                }
                 case 'message': {
                     this.handleMessage(store, item, file, arr);
+                    break;
+                }
+                case 'pageBlockMap': {
+                    this.handlePageBlockMap(store, item, file, arr, null);
                     break;
                 }
                 case 'photo': {
@@ -149,6 +169,18 @@ class FileStore extends EventEmitter {
                 }
                 case 'sticker': {
                     this.handleSticker(store, item, file, arr, null);
+                    break;
+                }
+                case 'video': {
+                    this.handleVideo(store, item, file, arr, null);
+                    break;
+                }
+                case 'videoNote': {
+                    this.handleVideoNote(store, item, file, arr, null);
+                    break;
+                }
+                case 'voiceNote': {
+                    this.handleVoiceNote(store, item, file, arr, null);
                     break;
                 }
                 case 'user': {
@@ -353,6 +385,9 @@ class FileStore extends EventEmitter {
     };
 
     handleAudio = (store, audio, file, arr, obj) => {
+        const chatId = obj ? obj.chat_id : 0;
+        const messageId = obj ? obj.id : 0;
+
         if (audio.album_cover_thumbnail) {
             const source = audio.album_cover_thumbnail.photo;
             if (source && source.id === file.id) {
@@ -360,8 +395,8 @@ class FileStore extends EventEmitter {
                     store,
                     source,
                     arr,
-                    () => this.updateAudioThumbnailBlob(obj.chat_id, obj.id, file.id),
-                    () => this.getRemoteFile(file.id, THUMBNAIL_PRIORITY, obj)
+                    () => this.updateAudioThumbnailBlob(chatId, messageId, file.id),
+                    () => this.getRemoteFile(file.id, THUMBNAIL_PRIORITY, obj || audio)
                 );
             }
         }
@@ -373,8 +408,8 @@ class FileStore extends EventEmitter {
                     store,
                     source,
                     arr,
-                    () => this.updateAudioBlob(obj.chat_id, obj.id, file.id),
-                    () => this.getRemoteFile(file.id, FILE_PRIORITY, obj)
+                    () => this.updateAudioBlob(chatId, messageId, file.id),
+                    () => this.getRemoteFile(file.id, FILE_PRIORITY, obj || audio)
                 );
             }
         }
@@ -394,6 +429,9 @@ class FileStore extends EventEmitter {
     };
 
     handleDocument = (store, document, file, arr, obj) => {
+        const chatId = obj ? obj.chat_id : 0;
+        const messageId = obj ? obj.id : 0;
+
         if (document.thumbnail) {
             const { photo: source } = document.thumbnail;
             if (source && source.id === file.id) {
@@ -401,8 +439,8 @@ class FileStore extends EventEmitter {
                     store,
                     source,
                     arr,
-                    () => this.updateDocumentThumbnailBlob(obj.chat_id, obj.id, file.id),
-                    () => this.getRemoteFile(file.id, THUMBNAIL_PRIORITY, obj)
+                    () => this.updateDocumentThumbnailBlob(chatId, messageId, file.id),
+                    () => this.getRemoteFile(file.id, THUMBNAIL_PRIORITY, obj || document)
                 );
             }
         }
@@ -414,14 +452,17 @@ class FileStore extends EventEmitter {
                     store,
                     source,
                     arr,
-                    () => this.updateDocumentBlob(obj.chat_id, obj.id, file.id),
-                    () => this.getRemoteFile(file.id, FILE_PRIORITY, obj)
+                    () => this.updateDocumentBlob(chatId, messageId, file.id),
+                    () => this.getRemoteFile(file.id, FILE_PRIORITY, obj || document)
                 );
             }
         }
     };
 
     handleLocation = (store, location, file, arr, obj) => {
+        const chatId = obj ? obj.chat_id : 0;
+        const messageId = obj ? obj.id : 0;
+
         const locationId = getLocationId(location);
         if (locationId) {
             const source = this.getLocationFile(locationId);
@@ -430,8 +471,28 @@ class FileStore extends EventEmitter {
                     store,
                     source,
                     arr,
-                    () => this.updateLocationBlob(obj.chat_id, obj.id, file.id),
-                    () => this.getRemoteFile(file.id, THUMBNAIL_PRIORITY, obj)
+                    () => this.updateLocationBlob(chatId, messageId, file.id),
+                    () => this.getRemoteFile(file.id, THUMBNAIL_PRIORITY, obj || location)
+                );
+            }
+        }
+    };
+
+    handlePageBlockMap = (store, pageBlockMap, file, arr, obj) => {
+        const chatId = obj ? obj.chat_id : 0;
+        const messageId = obj ? obj.id : 0;
+
+        const { location } = pageBlockMap;
+        const locationId = getLocationId(location, IV_LOCATION_WIDTH, IV_LOCATION_HEIGHT);
+        if (locationId) {
+            const source = this.getLocationFile(locationId);
+            if (source && source.id === file.id) {
+                this.getLocalFile(
+                    store,
+                    source,
+                    arr,
+                    () => this.updateLocationBlob(chatId, messageId, file.id),
+                    () => this.getRemoteFile(file.id, THUMBNAIL_PRIORITY, obj || pageBlockMap)
                 );
             }
         }
@@ -493,6 +554,9 @@ class FileStore extends EventEmitter {
     };
 
     handleVoiceNote = (store, voiceNote, file, arr, obj) => {
+        const chatId = obj ? obj.chat_id : 0;
+        const messageId = obj ? obj.id : 0;
+
         if (voiceNote.voice) {
             const source = voiceNote.voice;
             if (source && source.id === file.id) {
@@ -500,14 +564,17 @@ class FileStore extends EventEmitter {
                     store,
                     source,
                     arr,
-                    () => this.updateVoiceNoteBlob(obj.chat_id, obj.id, file.id),
-                    () => this.getRemoteFile(file.id, FILE_PRIORITY, obj)
+                    () => this.updateVoiceNoteBlob(chatId, messageId, file.id),
+                    () => this.getRemoteFile(file.id, FILE_PRIORITY, obj || voiceNote)
                 );
             }
         }
     };
 
     handleVideoNote = (store, videoNote, file, arr, obj) => {
+        const chatId = obj ? obj.chat_id : 0;
+        const messageId = obj ? obj.id : 0;
+
         if (videoNote.thumbnail) {
             const source = videoNote.thumbnail.photo;
             if (source && source.id === file.id) {
@@ -515,8 +582,8 @@ class FileStore extends EventEmitter {
                     store,
                     source,
                     arr,
-                    () => this.updateVideoNoteThumbnailBlob(obj.chat_id, obj.id, file.id),
-                    () => this.getRemoteFile(file.id, THUMBNAIL_PRIORITY, obj)
+                    () => this.updateVideoNoteThumbnailBlob(chatId, messageId, file.id),
+                    () => this.getRemoteFile(file.id, THUMBNAIL_PRIORITY, obj || videoNote)
                 );
             }
         }
@@ -528,14 +595,17 @@ class FileStore extends EventEmitter {
                     store,
                     source,
                     arr,
-                    () => this.updateVideoNoteBlob(obj.chat_id, obj.id, file.id),
-                    () => this.getRemoteFile(file.id, FILE_PRIORITY, obj)
+                    () => this.updateVideoNoteBlob(chatId, messageId, file.id),
+                    () => this.getRemoteFile(file.id, FILE_PRIORITY, obj || videoNote)
                 );
             }
         }
     };
 
     handleVideo = (store, video, file, arr, obj) => {
+        const chatId = obj ? obj.chat_id : 0;
+        const messageId = obj ? obj.id : 0;
+
         if (video.thumbnail) {
             const source = video.thumbnail.photo;
             if (source && source.id === file.id) {
@@ -543,8 +613,8 @@ class FileStore extends EventEmitter {
                     store,
                     source,
                     arr,
-                    () => this.updateVideoThumbnailBlob(obj.chat_id, obj.id, file.id),
-                    () => this.getRemoteFile(file.id, THUMBNAIL_PRIORITY, obj)
+                    () => this.updateVideoThumbnailBlob(chatId, messageId, file.id),
+                    () => this.getRemoteFile(file.id, THUMBNAIL_PRIORITY, obj || video)
                 );
             }
         }
@@ -556,8 +626,8 @@ class FileStore extends EventEmitter {
                     store,
                     source,
                     arr,
-                    () => this.updateVideoBlob(obj.chat_id, obj.id, file.id),
-                    () => this.getRemoteFile(file.id, FILE_PRIORITY, obj)
+                    () => this.updateVideoBlob(chatId, messageId, file.id),
+                    () => this.getRemoteFile(file.id, FILE_PRIORITY, obj || video)
                 );
             }
         }

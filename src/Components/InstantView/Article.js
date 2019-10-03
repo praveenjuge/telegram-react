@@ -7,23 +7,27 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { withIV } from './IVContext';
 import { getPageBlock } from '../../Utils/InstantView';
 import './Article.css';
 
-function Article(props) {
-    const { content } = props;
-    if (!content) return null;
+class Article extends React.PureComponent {
+    render() {
+        const { iv } = this.props;
+        if (!iv) return null;
 
-    const { page_blocks } = content;
-    if (!page_blocks) return;
+        const { page_blocks, is_rtl } = iv;
+        if (!page_blocks) return;
 
-    return <article>{page_blocks.map(getPageBlock)}</article>;
+        return (
+            <article dir={is_rtl ? 'rtl' : 'ltr'}>{page_blocks.map((x, index) => getPageBlock(x, iv, index))}</article>
+        );
+    }
 }
 
 Article.propTypes = {
     chatId: PropTypes.number,
-    messageId: PropTypes.number,
-    content: PropTypes.object.isRequired
+    messageId: PropTypes.number
 };
 
-export default Article;
+export default withIV(Article);

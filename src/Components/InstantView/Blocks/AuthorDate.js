@@ -9,26 +9,33 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import dateFormat from 'dateformat';
 import RichText from '../RichText/RichText';
+import { isEmptyText } from '../../../Utils/InstantView';
 
 function AuthorDate(props) {
     const { author, publishDate } = props;
 
-    const d = new Date(publishDate * 1000);
+    const hasAuthor = !isEmptyText(author);
+    const hasDate = publishDate > 0;
+    if (!hasAuthor && !hasDate) return null;
+
+    const d = publishDate > 0 ? new Date(publishDate * 1000) : null;
 
     return (
         <address>
-            <a rel='author'>
-                <RichText text={author} />
-            </a>
-            {' • '}
-            <time dateTime={d.toISOString()}>{dateFormat(d, 'dd mmm, yyyy')}</time>
+            {hasAuthor && (
+                <a rel='author'>
+                    <RichText text={author} />
+                </a>
+            )}
+            {hasAuthor && hasDate && ' • '}
+            {hasDate && <time dateTime={d.toISOString()}>{dateFormat(d, 'dd mmm, yyyy')}</time>}
         </address>
     );
 }
 
 AuthorDate.propTypes = {
-    author: PropTypes.object.isRequired,
-    publishDate: PropTypes.number.isRequired
+    author: PropTypes.object,
+    publishDate: PropTypes.number
 };
 
 export default AuthorDate;

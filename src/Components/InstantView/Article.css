@@ -4,7 +4,9 @@
  * This source code is licensed under the GPL v.3.0 license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 article {
+    white-space: pre-wrap;
     font-family: 'Helvetica Neue';
     font-size: 17px;
     line-height: 25px;
@@ -18,20 +20,20 @@ article h2 {
     font-family: 'Georgia';
     font-size: 28px;
     line-height: 31px;
-    margin: 21px 18px 12px;
+    margin: 21px 0 12px;
     font-weight: normal;
 }
 article h2 {
     font-size: 24px;
     line-height: 30px;
-    margin: -6px 18px 12px;
+    margin: -6px 0 12px;
     color: #777;
 }
 article h6.kicker {
     font-family: 'Helvetica Neue';
     font-size: 14px;
     line-height: 17px;
-    margin: 21px 18px 12px;
+    margin: 21px 0 12px;
     font-weight: 500;
     color: #79828b;
 }
@@ -41,7 +43,7 @@ article h6.kicker + h1 {
 article address {
     font-size: 15px;
     color: #79828b;
-    margin: 12px 18px 21px;
+    margin: 12px 0 21px;
     font-style: normal;
 }
 article address a,
@@ -51,6 +53,34 @@ article address a[href] {
 article a[href] {
     text-decoration: none;
 }
+article .document,
+article .audio {
+    margin: 6px 0;
+}
+article .location,
+article .photo,
+article .animation,
+article .video {
+    margin: 0 auto 6px;
+}
+
+article blockquote .location,
+article blockquote .photo,
+article blockquote .animation,
+article blockquote .video {
+    margin: 0 0 6px;
+}
+
+article blockquote figure {
+    text-align: left;
+}
+article blockquote figcaption {
+    text-align: left;
+}
+
+article blockquote address {
+    margin: 0 0 12px 0;
+}
 /*article a[name] {
   position: absolute !important;
   display: block;
@@ -58,16 +88,24 @@ article a[href] {
   margin: -3px 0;
   left: 0; right: 0;
 }*/
+article > details {
+    margin: 0 0;
+}
+article mark {
+    background: #fff8cc;
+    border-radius: 3px;
+    padding: 0 3px;
+}
 article p {
     margin: 0 0 12px;
 }
 article > p {
-    margin: 0 18px 12px;
+    margin: 0 0 12px;
 }
 article pre {
     font-family: Menlo;
     margin: 14px 0;
-    padding: 7px 18px;
+    padding: 7px 12px;
     background: #f5f8fc;
     font-size: 16px;
     white-space: pre-wrap;
@@ -81,16 +119,16 @@ article h4 {
     font-family: 'Georgia';
     font-size: 24px;
     line-height: 30px;
-    margin: 18px 18px 9px;
+    margin: 18px 0 9px;
     font-weight: normal;
 }
 article h4 {
     font-size: 19px;
-    margin: 18px 18px 7px;
+    margin: 18px 0 7px;
 }
 article blockquote {
     font-family: 'Georgia';
-    margin: 18px 18px 16px;
+    margin: 18px 0 16px;
     padding-left: 22px;
     position: relative;
     font-style: italic;
@@ -104,13 +142,13 @@ article blockquote:before {
     top: 3px;
     bottom: 3px;
     width: 3px;
-    background-color: #000;
+    background-color: #777;
     border-radius: 3px;
 }
 article aside {
     font-family: 'Georgia';
-    margin: 18px 18px 16px;
-    padding: 0 18px;
+    margin: 18px 0 16px;
+    padding: 0 0;
     text-align: center;
     font-style: italic;
 }
@@ -135,24 +173,39 @@ article footer hr {
     margin: 18px auto 16px;
 }
 article ul {
-    margin: 18px;
-    padding-left: 22px; /*16px*/
-    /*list-style: none;*/
+    margin: 18px 0;
+    padding-left: 22px;
+    list-style: none;
 }
+article ul.related-articles {
+    list-style: disc;
+}
+article li p {
+    min-height: 25px;
+}
+article ul li::before {
+    content: attr(data-before);
+    position: absolute;
+    text-align: right;
+    width: 1.5em;
+    margin-left: -2em;
+    margin-right: 0.5em;
+}
+
 /*article ul > li {
-  padding-left: 6px;
-  position: relative;
+padding-left: 6px;
+position: relative;
 }
 article ul > li:before {
-  content: '\2022';
-  position: absolute;
-  display: block;
-  font-size: 163%;
-  left: -19px;
-  top: 1px;
+content: '\2022';
+position: absolute;
+display: block;
+font-size: 163%;
+left: -19px;
+top: 1px;
 }*/
 article ol {
-    margin: 18px;
+    margin: 18px 0;
     padding-left: 18px;
 }
 article ol > li {
@@ -170,14 +223,16 @@ article figure blockquote {
 
 article table {
     width: 100%;
-    margin: 0 18px 12px;
+    margin: 0 0 12px;
     border-collapse: collapse;
 }
 article table tr {
     background-color: #fff;
+    color: black;
 }
 article table[striped] tr:nth-child(odd) {
     background-color: #f7f7f7;
+    color: black;
 }
 
 article td,
@@ -187,6 +242,7 @@ article th {
 
 article th {
     background-color: #efefef;
+    color: black;
 }
 
 article table[striped] tr:nth-child(odd) td {
@@ -200,11 +256,10 @@ article table.f th {
     min-height: 10px;
 }
 
-img,
-video,
-iframe {
+article img,
+article video,
+article iframe {
     max-width: 100%;
-    max-height: 400px;
     vertical-align: top;
 }
 .autosize iframe {
@@ -214,7 +269,7 @@ iframe {
 .collage img {
     margin: 0 6px 6px 0;
 }
-audio {
+article audio {
     width: 100%;
     vertical-align: top;
     margin: 0 0 16px;
@@ -232,27 +287,27 @@ audio {
     top: 0;
     left: 0;
 }
-figure {
+article figure {
     margin: 0 0 16px;
     padding: 0;
     text-align: center;
 }
-figure.nowide {
-    margin-left: 18px;
-    margin-right: 18px;
+article figure.nowide {
+    margin-left: 0;
+    margin-right: 0;
 }
-figure.nowide figcaption {
+article figure.nowide figcaption {
     padding-left: 0;
     padding-right: 0;
 }
-figcaption {
+article figcaption {
     font-size: 15px;
     color: #79828b;
-    padding: 6px 18px 0;
+    padding: 6px 0 0;
     line-height: 26px;
-    text-align: left;
+    text-align: center;
 }
-figcaption > cite {
+article figcaption > cite {
     font-family: 'Helvetica Neue';
     font-size: 12px;
     display: block;
@@ -260,24 +315,24 @@ figcaption > cite {
     padding: 0 0 2px;
     font-style: normal;
 }
-footer {
-    margin: 12px 18px;
+article footer {
+    margin: 12px 0;
     color: #79828b;
 }
 
-section {
+article section {
     display: table;
     width: 100%;
     height: 100%;
 }
-section > aside {
+article section > aside {
     display: table-cell;
     vertical-align: middle;
     text-align: center;
     color: #999;
     font-size: 24px;
 }
-section > aside > cite {
+article section > aside > cite {
     display: block;
     font-size: 14px;
     padding: 10px 0 0;
@@ -313,4 +368,8 @@ article.cached_page p {
 }
 *[data-block]:hover:after {
     display: block;
+}
+
+ul.related-articles address {
+    margin: 0;
 }

@@ -122,7 +122,11 @@ function getFormattedText(text) {
         );
         switch (text.entities[i].type['@type']) {
             case 'textEntityTypeUrl': {
-                result.push(<SafeLink key={text.entities[i].offset} url={entityText} displayText={entityText} />);
+                result.push(
+                    <SafeLink key={text.entities[i].offset} url={entityText}>
+                        {entityText}
+                    </SafeLink>
+                );
                 break;
             }
             case 'textEntityTypeTextUrl': {
@@ -132,7 +136,11 @@ function getFormattedText(text) {
                     url = typeUrl;
                 }
 
-                result.push(<SafeLink key={text.entities[i].offset} url={url} displayText={entityText} />);
+                result.push(
+                    <SafeLink key={text.entities[i].offset} url={url}>
+                        {entityText}
+                    </SafeLink>
+                );
                 break;
             }
             case 'textEntityTypeBold':
@@ -562,11 +570,17 @@ function isMediaContent(content) {
     return content['@type'] === 'messagePhoto';
 }
 
-function getLocationId(location) {
+function getLocationId(
+    location,
+    width = LOCATION_WIDTH,
+    height = LOCATION_HEIGHT,
+    zoom = LOCATION_ZOOM,
+    scale = LOCATION_SCALE
+) {
     if (!location) return null;
 
     const { longitude, latitude } = location;
-    return `loc=${latitude},${longitude}&size=${LOCATION_WIDTH},${LOCATION_HEIGHT}&scale=${LOCATION_SCALE}&zoom=${LOCATION_ZOOM}`;
+    return `loc=${latitude},${longitude}&size=${width},${height}&scale=${scale}&zoom=${zoom}`;
 }
 
 function isVideoMessage(chatId, messageId) {
@@ -845,10 +859,10 @@ function openAnimation(animation, message, fileCancel) {
     } else if (fileCancel && file.remote.is_uploading_active) {
         FileStore.cancelUploadFile(file.id, message);
         return;
+    } else {
+        // download file at loadMediaViewerContent instead
+        // download(file, message, FileStore.updateAnimationBlob(chat_id, id, file.id));
     }
-
-    // download file at loadMediaViewerContent instead
-    // download(file, message, FileStore.updateAnimationBlob(chat_id, id, file.id));
 
     TdLibController.clientUpdate({
         '@type': 'clientUpdateActiveAnimation',

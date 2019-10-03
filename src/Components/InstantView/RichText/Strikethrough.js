@@ -9,16 +9,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import RichText from './RichText';
 
-class Strikethrough extends React.Component {
-    render() {
-        const { text } = this.props;
-
-        return (
-            <del>
-                <RichText text={text} />
-            </del>
-        );
-    }
+function Strikethrough(props) {
+    return (
+        <del>
+            <RichText text={props.text} />
+        </del>
+    );
 }
 
 Strikethrough.propTypes = {

@@ -9,22 +9,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Caption from './Caption';
 import MediaAnimation from '../../../Components/Message/Media/Animation';
+import { IV_PHOTO_DISPLAY_SIZE } from '../../../Constants';
 
 function Animation(props) {
-    const { animation, caption, need_autoplay } = props;
+    const { animation, caption, need_autoplay, openMedia } = props;
 
     return (
         <>
-            <MediaAnimation animation={animation} style={{ margin: '0 auto' }} />
-            {caption && <Caption text={caption.text} credit={caption.credit} />}
+            <MediaAnimation animation={animation} displaySize={IV_PHOTO_DISPLAY_SIZE} openMedia={openMedia} />
+            <Caption text={caption.text} credit={caption.credit} />
         </>
     );
 }
 
 Animation.propTypes = {
-    animation: PropTypes.object.isRequired,
+    animation: PropTypes.object,
     caption: PropTypes.object.isRequired,
-    need_autoplay: PropTypes.bool.isRequired
+    needAutoplay: PropTypes.bool.isRequired,
+    openMedia: PropTypes.func
 };
 
 export default Animation;
